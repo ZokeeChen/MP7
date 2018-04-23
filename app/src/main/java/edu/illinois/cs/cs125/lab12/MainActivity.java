@@ -3,6 +3,11 @@ package edu.illinois.cs.cs125.lab12;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -13,6 +18,9 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 
 /**
  * Main class for our UI design lab.
@@ -23,6 +31,8 @@ public final class MainActivity extends AppCompatActivity {
 
     /** Request queue for our API requests. */
     private static RequestQueue requestQueue;
+
+    JsonObject rates;
 
     /**
      * Run when this activity comes to the foreground.
@@ -38,7 +48,23 @@ public final class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        startAPICall();
+        final Button usd = findViewById(R.id.getRate);
+        usd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To get Exchange Rates");
+                startAPICall();
+            }
+        });
+        final Button can = findViewById(R.id.can);
+        can.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To get CAN");
+                getCAN();
+            }
+        });
+
     }
 
     /**
@@ -49,6 +75,25 @@ public final class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    void getRates(JSONObject response) {
+        if (response == null) {
+            return;
+        }
+        JsonParser parser = new JsonParser();
+        JsonObject result = parser.parse(response.toString()).getAsJsonObject();
+        rates = result.getAsJsonObject("rates");
+        TextView text = findViewById(R.id.textView3);
+        text.setText(rates.toString());
+    }
+    void getCAN() {
+        if (rates == null) {
+            return;
+        }
+        String num = rates.get("CAD").getAsString();
+        TextView text = findViewById(R.id.textView4);
+        text.setText(num);
+    }
+
     /**
      * Make a call to the weather API.
      */
@@ -56,14 +101,16 @@ public final class MainActivity extends AppCompatActivity {
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
-                    "http://api.openweathermap.org/data/2.5/weather?zip=61820,us&appid="
+                    "https://exchangeratesapi.io/api/latest?base=USD"
                             + BuildConfig.API_KEY,
                     null,
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(final JSONObject response) {
                             try {
-                                Log.d(TAG, response.toString(2));
+                                Log.d(TAG, response.toString(5));
+                                getRates(response);
+
                             } catch (JSONException ignored) { }
                         }
                     }, new Response.ErrorListener() {
