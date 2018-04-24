@@ -92,6 +92,7 @@ public final class MainActivity extends AppCompatActivity {
         String num = rates.get("CAD").getAsString();
         TextView text = findViewById(R.id.textView4);
         text.setText(num);
+        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
     }
 
     /**
