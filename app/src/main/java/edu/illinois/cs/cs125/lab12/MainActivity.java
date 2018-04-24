@@ -64,6 +64,40 @@ public final class MainActivity extends AppCompatActivity {
                 getCAN();
             }
         });
+        final Button CNY = findViewById(R.id.TOCNYB);
+        CNY.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To get CNY");
+                getCNY();
+            }
+        });
+        final Button jpy = findViewById(R.id.tojpyb);
+        jpy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To get CNY");
+                getJPY();
+            }
+        });
+        final Button aud = findViewById(R.id.button3);
+        aud.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To get CNY");
+                getAUD();
+            }
+        });
+        final Button gbp = findViewById(R.id.button4);
+        gbp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To get CNY");
+                getGBP();
+            }
+        });
+
+
 
     }
 
@@ -91,6 +125,42 @@ public final class MainActivity extends AppCompatActivity {
         }
         String num = rates.get("CAD").getAsString();
         TextView text = findViewById(R.id.textView4);
+        text.setText(num);
+        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
+    }
+    void getCNY() {
+        if (rates == null) {
+            return;
+        }
+        String num = rates.get("CNY").getAsString();
+        TextView text = findViewById(R.id.TOCNYT);
+        text.setText(num);
+        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
+    }
+    void getGBP() {
+        if (rates == null) {
+            return;
+        }
+        String num = rates.get("GBP").getAsString();
+        TextView text = findViewById(R.id.textView6);
+        text.setText(num);
+        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
+    }
+    void getJPY() {
+        if (rates == null) {
+            return;
+        }
+        String num = rates.get("JPY").getAsString();
+        TextView text = findViewById(R.id.textView2);
+        text.setText(num);
+        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
+    }
+    void getAUD() {
+        if (rates == null) {
+            return;
+        }
+        String num = rates.get("AUD").getAsString();
+        TextView text = findViewById(R.id.textView5);
         text.setText(num);
         Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
     }
