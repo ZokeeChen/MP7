@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +35,10 @@ public final class MainActivity extends AppCompatActivity {
 
     JsonObject rates;
 
+    double amountof = 1;
+    String currentBase = "USD";
+    String aimCur = "CNY";
+
     /**
      * Run when this activity comes to the foreground.
      *
@@ -61,7 +66,7 @@ public final class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "To get CAN");
-                getCAN();
+                getCAD();
             }
         });
         final Button CNY = findViewById(R.id.TOCNYB);
@@ -97,7 +102,47 @@ public final class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        final Button tochange = findViewById(R.id.button);
+        tochange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To exchange");
+                getGBP();
+                getAUD();
+                getCNY();
+                getCAD();
+                getJPY();
+                getAim();
+            }
+        });
+        final EditText amount = findViewById(R.id.editText);
+        amount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To get CNY");
+                String tem = amount.getText().toString();
+                amountof = Double.parseDouble(tem);
+                Toast.makeText(MainActivity.this, "Amount to change =" + tem, Toast.LENGTH_SHORT).show();
+            }
+        });
+        final EditText base = findViewById(R.id.editText2);
+        base.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To set base");
+                currentBase = base.getText().toString().toUpperCase();
+                Toast.makeText(MainActivity.this, "Set base as" + currentBase, Toast.LENGTH_SHORT).show();
+            }
+        });
+        final EditText aim = findViewById(R.id.editText3);
+        aim.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "To set base");
+                aimCur = aim.getText().toString().toUpperCase();
+                Toast.makeText(MainActivity.this, "Set aim as" + aimCur, Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
@@ -107,6 +152,14 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    private EditText toedit;
+
+    void buOnClick(View v) {
+        Button button = (Button) v;
+        toedit = (EditText) findViewById(R.id.editText);
+        Toast.makeText(this, "to do the edit", Toast.LENGTH_SHORT).show();
     }
 
     void getRates(JSONObject response) {
@@ -119,50 +172,77 @@ public final class MainActivity extends AppCompatActivity {
         TextView text = findViewById(R.id.textView3);
         text.setText(rates.toString());
     }
-    void getCAN() {
+    void getAim() {
         if (rates == null) {
             return;
         }
-        String num = rates.get("CAD").getAsString();
+        if (!rates.has(aimCur)) {
+            Toast.makeText(this, "No aim Currency Found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Double num = rates.get(aimCur).getAsDouble();
+        Double aa = num * amountof;
+        Toast.makeText(this, "To " +aimCur+" is "+ aa.toString(), Toast.LENGTH_SHORT).show();
+    }
+    void getCAD() {
+        if (rates == null) {
+            return;
+        }
+        if (!rates.has("CAD")) {
+            return;
+        }
+        Double num = rates.get("CAD").getAsDouble();
+        Double aa = num * amountof;
         TextView text = findViewById(R.id.textView4);
-        text.setText(num);
-        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
+        text.setText(aa.toString());
     }
     void getCNY() {
         if (rates == null) {
             return;
         }
-        String num = rates.get("CNY").getAsString();
+        if (!rates.has("CNY")) {
+            return;
+        }
+        Double num = rates.get("CNY").getAsDouble();
+        Double aa = num * amountof;
         TextView text = findViewById(R.id.TOCNYT);
-        text.setText(num);
-        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
+        text.setText(aa.toString());
     }
     void getGBP() {
         if (rates == null) {
             return;
         }
-        String num = rates.get("GBP").getAsString();
+        if (!rates.has("GBP")) {
+            return;
+        }
+        Double num = rates.get("GBP").getAsDouble();
+        Double aa = num * amountof;
         TextView text = findViewById(R.id.textView6);
-        text.setText(num);
-        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
+        text.setText(aa.toString());
     }
     void getJPY() {
         if (rates == null) {
             return;
         }
-        String num = rates.get("JPY").getAsString();
+        if (!rates.has("JPY")) {
+            return;
+        }
+        Double num = rates.get("JPY").getAsDouble();
+        Double aa = num * amountof;
         TextView text = findViewById(R.id.textView2);
-        text.setText(num);
-        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
+        text.setText(aa.toString());
     }
     void getAUD() {
         if (rates == null) {
             return;
         }
-        String num = rates.get("AUD").getAsString();
+        if (!rates.has("AUD")) {
+            return;
+        }
+        Double num = rates.get("AUD").getAsDouble();
+        Double aa = num * amountof;
         TextView text = findViewById(R.id.textView5);
-        text.setText(num);
-        Toast.makeText(this, num, Toast.LENGTH_SHORT).show();
+        text.setText(aa.toString());
     }
 
     /**
@@ -172,7 +252,7 @@ public final class MainActivity extends AppCompatActivity {
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                     Request.Method.GET,
-                    "https://exchangeratesapi.io/api/latest?base=USD"
+                    "https://exchangeratesapi.io/api/latest?base=" + currentBase
                             + BuildConfig.API_KEY,
                     null,
                     new Response.Listener<JSONObject>() {
